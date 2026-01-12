@@ -6,16 +6,27 @@
 
 ## Table of Contents
 
-- [About](#about)
-- [Key Features](#key-features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Integration](#integration)
+- [eID - IDnow](#eid---idnow)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Key Features](#key-features)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+    - [Add IDnowEID library](#add-idnoweid-library)
+	  - [IDnowEID library (static)](#static-idnoweid-library)
+	  - [IDnowEID library (dynamic)](#dynamic-idnoweid-library)
+    - [Configure NFC](#configure-nfc)
+      - [Target settings - Signing \& Capabilities](#target-settings---signing--capabilities)
+      - [Entitlements file](#entitlements-file)
+      - [Info.plist file](#infoplist-file)
+  - [Integration](#integration)
     - [Starting the SDK](#starting-the-sdk)
-    - [Handle Result](#handle-result)
-    - [Error Description](#error-description)
-- [Customization](#customization)
-- [Additional features](#additional-features)
+    - [Handle result](#handle-result)
+    - [Error Description:](#error-description)
+  - [Customization](#customization)
+  - [Additional features](#additional-features)
+    - [Dark mode](#dark-mode)
+    - [Localization](#localization)
 
 ## About
 
@@ -34,34 +45,44 @@ The eID iOS SDK is a library designed to authenticate with these German ID cards
 * **Deployment target:** iOS 13 or later.
 * **Swift:** 5.9
 * **Authada library:** The provider used to scan the chip (provided separately as an xcframework)
+* **OpenSSL:** used by the AuthadaAuthenticationLibrary. Current version: 3.1.5
 * **NFC:** NFC-enabled smartphone. (iPhone7 or newer models)
 
 ## Installation
 
-Follow the next steps to integrate the eID library into your application:
+You can install either the dynamic IDnowEID library or the static IDnowEIDLibrary. Follow the next steps to integrate one of them into your application:
 
-### IDnowEID library
+### Add IDnowEID library
+#### Static IDnowEID library
 
-IDnowEID sdk is only available through Swift Package Manager (SPM):
+IDnowEID (static) sdk is only available through Swift Package Manager (SPM):
 
 * [https://github.com/idnow/eid-sdk-ios](https://github.com/idnow/eid-sdk-ios)
 
-### Authada library:
+Add `IDnowEID` to your target.
 
-Will be provided separately. You will need to simply add `AuthadaAuthenticationLibrary.xcframework` to your Xcode project.
+3 libraries will be provided separately + 1 resource bundle. You will need to add `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework`, `OpenSSL.xcframework` and `AALUSResources.bundle` to your Xcode project.
+Here is the step to add them:
+
+- Add `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework` to `Frameworks, Libraries, and Embedded Content` section of your application target.
+- Verify that `Link Binary With Libraries` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework`.
+- Verify that `Embed Frameworks` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework`.
+- Verify that `Copy resources` in your target’s Build Phases include `AALUSResources.bundle`.
+
+#### Dynamic IDnowEID library
+
+IDnowEID (dynamic) sdk is only available through Swift Package Manager (SPM):
+
+* [https://github.com/idnow/eid-sdk-ios](https://github.com/idnow/eid-sdk-ios)
+
+Add `IDnowEIDDynamic` to your target.
+
+1 library will be provided separately. You will need to add `AuthadaAuthenticationLibraryUnbundled.xcframework` to your Xcode project.
 Here is the step to add it:
 
-- Add `AuthadaAuthenticationLibrary.xcframework` to `Frameworks, Libraries, and Embedded Content` section of your application target.
-- Verify that `Link Binary With Libraries` in your target’s Build Phases include `AuthadaAuthenticationLibrary.xcframework`.
-- Verify that `Embed Frameworks` in your target’s Build Phases include `AuthadaAuthenticationLibrary.xcframework`.
-
-### Import Lottie: 
-Lottie is a framework used to play animation using JSON resources. We use it in the eID SDK.
-
-If you don't already imported it, please add the repository in your dependencies. 
-Using SPM, add a new package and set this url:
-
-* [https://github.com/airbnb/lottie-spm.git](https://github.com/airbnb/lottie-spm.git)
+- Add `AuthadaAuthenticationLibraryUnbundled.xcframework` to `Frameworks, Libraries, and Embedded Content` section of your application target.
+- Verify that `Link Binary With Libraries` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundled.xcframework`.
+- Verify that `Embed Frameworks` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundled.xcframework`.
 
 ### Configure NFC
 #### Target settings - Signing & Capabilities
@@ -115,7 +136,7 @@ extension ClientAppViewModel: EIDCallback {
     func onSuccess() {
         // Handle success case here
     }
-    func onFailure(error: IDnowEID.EIDError) {
+    func onFailure(error: EIDError) {
         // Handle error cases here.
     }
 }
@@ -127,8 +148,11 @@ When the SDK stops with an error, you have access to several type of errors from
 public enum EIDError {
     /// Session has been cancelled by user. The reason is set by user in the quitting flow screen.
     case aborted(reason: String)
-    /// A network error occurred.
-    case networkError
+     /// A network error occurred.
+    ///
+    /// - Parameters:
+    ///   - reason: optionnal reason for specific cases, nil by default for client or server errors.
+    case networkError(reason: NetworErrorReason?)
     /// NFC is not available on the device.
     case nfcNotAvailable
     /// Ident-ID is invalid.
@@ -154,58 +178,65 @@ public enum EIDError {
 - The parameter `config` contains all the properties to customize your eID experience.
   - Use `showTermsAndConditions(true/false)` to display or not the terms and conditions screen.
   - Use `setTheme` to customize all screen designs: colors, fonts, radius, spacing.
+  - Use `setCustomFont` to customize all fonts.
 
 Here is a example of theme and font customization to apply on eID:
 
 ```swift
-private var exampleTheme: IDnowPrimitives {
-    // Test custom colors by calling setUIPreferences(getCustomUIPrefs()) on the config builder
-    let brandColors = BrandColors(
-      primary: UIColor(rgbaValue: 0x2C64E3FF),
-      primaryVariant: UIColor(rgbaValue: 0xe8f0fcFF),
-      secondary: UIColor(rgbaValue: 0x2C64E3FF),
-      secondaryVariant: UIColor(rgbaValue: 0x2C64E3FF),
-      error: UIColor(rgbaValue: 0xd94a4aFF),
-      processing: UIColor(rgbaValue: 0xf9bf25FF),
-      success: UIColor(rgbaValue: 0x26d357FF),
-      active: UIColor(rgbaValue: 0x2c64e3FF)
-    )
-    let greyColors = GreyColors(
-      grey100: UIColor(rgbaValue: 0xffffffFF),
-      grey200: UIColor(rgbaValue: 0xeeeeeeFF),
-      grey300: UIColor(rgbaValue: 0xdededeFF),
-      grey400: UIColor(rgbaValue: 0xb6b6b6FF),
-      grey500: UIColor(rgbaValue: 0x888888FF),
-      grey600: UIColor(rgbaValue: 0x595959FF),
-      grey800: UIColor(rgbaValue: 0x333333FF),
-      grey900: UIColor(rgbaValue: 0x000000FF)
-    )
-    let customColors = IDnowColors(brand: brandColors, grey: greyColors)
-    let customRadius = IDnowRadius(
-      radius1: 8,
-      radius2: 16,
-      radius3: 24,
-      radius4: 400
-    )
-    let customSpacing = IDnowSpacing(
-      spacing0_5: 8,
-      spacing1: 16,
-      spacing2: 24,
-      spacing3: 32,
-      spacing4: 40,
-      spacing5: 48,
-      spacing6: 56
-    )
-    return IDnowPrimitives(colors: customColors, radius: customRadius, spacing: customSpacing)
+private var exampleTheme: EIDTheme {
+        let brandColors = EIDBrandColorsApi(primary: "#2C64E3",
+                                            primaryVariant: "#e8f0fc",
+                                            secondary: "#2C64E3",
+                                            secondaryVariant: "#2C64E3",
+                                            error: "#d94a4a",
+                                            processing: "#f9bf25",
+                                            success: "#26d357",
+                                            active: "#2c64e3")
+
+        let greyColors = EIDGreyColorsApi(grey100: "#ffffff",
+                                          grey200: "#eeeeee",
+                                          grey300: "#dedede",
+                                          grey400: "#b6b6b6",
+                                          grey500: "#888888",
+                                          grey600: "#595959",
+                                          grey800: "#333333",
+                                          grey900: "#000000")
+
+        let customColors = EIDColorsApi(brand: brandColors, grey: greyColors)
+
+        let customRadius = EIDRadiusApi(radius1: 8,
+                                        radius2: 16,
+                                        radius3: 24,
+                                        radius4: 400)
+
+        let customSpacing = EIDSpacingApi(spacing05: 8,
+                                          spacing1: 16,
+                                          spacing2: 24,
+                                          spacing3: 32,
+                                          spacing4: 40,
+                                          spacing5: 48,
+                                          spacing6: 56)
+
+        let fontSize = EIDFontSizeApi(size0: 1.1)
+        let fontApi = EIDFontApi(fontSize: fontSize)
+
+        return EIDTheme(color: customColors, radius: customRadius, spacing: customSpacing, font: fontApi)
+}
+
+private var exampleFont: EIDCustomFont {
+        return EIDCustomFont(heading: UIFont.systemFont(ofSize: 24, weight: .bold),
+                             regularContent: UIFont.systemFont(ofSize: 17),
+                             mediumContent: UIFont.systemFont(ofSize: 17, weight: .medium))
 }
 ```
 
+
 Then, you can apply this theme to the eID SDK: 
 ```swift
-let config = try EIDConfig.Builder(token: token)
-                .setShowTermsAndConditions(false)
-                .setTheme(exampleTheme)
-                .build()
+let config = EIDConfig.Builder()
+			.setTheme(exampleTheme)
+			.setCustomFont(exampleFont)
+			.build()
 ```
 
 🎨 You are now fully ready to install, implement, integrate and customize our SDK.

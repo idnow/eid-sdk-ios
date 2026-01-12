@@ -23,13 +23,13 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "IDnowEID",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.2.0/IDnowEID.xcframework.zip",
-            checksum: "9fb6fe35e6c1cef5fdc2d68487c3ffd1e1c4ecc9dc55004d1dec3d79a9620075"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.2.1/IDnowEID.xcframework.zip",
+            checksum: "a8c9ac884f8081e6eef39356c4e9357cc6779a1a85173e0545fb69a55912aa50"
         ),
         .binaryTarget(
             name: "IDnowEIDDynamic",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.2.0/IDnowEIDDynamic.xcframework.zip",
-            checksum: "3f42c8ed385ce66ecd2fedd40feb4d742baeba57e2135fee33fc69cf789ef334"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.2.1/IDnowEIDDynamic.xcframework.zip",
+            checksum: "708ef7e32266430e87a5c154b1624eb262e8b68103d78101a7ed0e116009bb93"
         ),
         .target(
             name: "IDnowEIDDynamicWrapper",
