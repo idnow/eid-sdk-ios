@@ -1,6 +1,15 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## [1.2.2] - 2026-01-30
+
+## 🚀 Improvements
+- Added a new **security enhancement** to further strengthen user data protection and improve overall reliability of the eID process.
+
+---
+
+## 🐞 Fixes
+- Fixed an issue where **Terms & Conditions** were displayed even when the corresponding parameter was set to `false`.  
+- Resolved a problem where the **PIN Size Selector** screen was not displayed as expected during the identification flow.
 
 ## [1.2.1] - 2026-01-12
 ### Fixed
