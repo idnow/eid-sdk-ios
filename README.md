@@ -42,22 +42,31 @@ The eID iOS SDK is a library designed to authenticate with these German ID cards
 ## Requirements
 
 * **Xcode:** version 16.3 or higher.
-* **Deployment target:** iOS 13 or later.
+* **Deployment target:** Depends of the target: iOS 13.0 for IDnowEID, iOS 14.0 for IDnowEIDDynamic and IDnowEIDGovernikus
 * **Swift:** 5.9
-* **Authada library:** The provider used to scan the chip (provided separately as an xcframework)
+* **Authada library:** One of the 2 providers used to scan the chip (provided separately as an xcframework)
+* **Governikus library:**  One of the 2 providers used to scan the chip (automaticaly fetched via SPM)
 * **OpenSSL:** used by the AuthadaAuthenticationLibrary. Current version: 3.1.5
 * **NFC:** NFC-enabled smartphone. (iPhone7 or newer models)
 
 ## Installation
 
-You can install either the dynamic IDnowEID library or the static IDnowEIDLibrary. Follow the next steps to integrate one of them into your application:
+You have the choice to install 3 possible targets:
+- IDnowEID: static version with Authada external provider
+- IDnowEIDDynamic: dynamic version of eID with Authada external provider
+- IDnowEIDGovernikus: dynamic version of eID with Governikus (AusweisApp) external provider
 
-### Add IDnowEID library
-#### Static IDnowEID library
+Follow the next steps to integrate one of them into your application:
 
-IDnowEID (static) sdk is only available through Swift Package Manager (SPM):
+### Import the project
+IDnowEID (static, dynamic or governikus) sdk are only available through a single URL via Swift Package Manager (SPM):
 
 * [https://github.com/idnow/eid-sdk-ios](https://github.com/idnow/eid-sdk-ios)
+
+After importing it, select a target according to your need, you should only import one ⚠️
+
+### Add a specific eID library
+#### Static IDnowEID library
 
 Add `IDnowEID` to your target.
 
@@ -66,14 +75,11 @@ Here is the step to add them:
 
 - Add `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework` to `Frameworks, Libraries, and Embedded Content` section of your application target.
 - Verify that `Link Binary With Libraries` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework`.
-- Verify that `Embed Frameworks` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework`.
+- Verify that `Embed Frameworks` in your target’s Build Phases include `Lottie.xcframework` and `OpenSSL.xcframework`.
+- Verify that `Embed Frameworks` in your target's Build Phases **do not** include `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`.
 - Verify that `Copy resources` in your target’s Build Phases include `AALUSResources.bundle`.
 
-#### Dynamic IDnowEID library
-
-IDnowEID (dynamic) sdk is only available through Swift Package Manager (SPM):
-
-* [https://github.com/idnow/eid-sdk-ios](https://github.com/idnow/eid-sdk-ios)
+#### IDnowEIDDynamic library
 
 Add `IDnowEIDDynamic` to your target.
 
@@ -84,9 +90,14 @@ Here is the step to add it:
 - Verify that `Link Binary With Libraries` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundled.xcframework`.
 - Verify that `Embed Frameworks` in your target’s Build Phases include `AuthadaAuthenticationLibraryUnbundled.xcframework`.
 
+#### IDnowEIDGovernikus library
+
+Add `IDnowEIDGovernikus` to your target.
+
+All libraries are imported automatically. It will be the case of the Governikus sdk.
+
 ### Configure NFC
 #### Target settings - Signing & Capabilities
-
 Add Near Field Communication Tag Reading as a capability
 
 #### Entitlements file
@@ -108,26 +119,40 @@ Add Near Field Communication Tag Reading as a capability
 👏 You have now access to the eID SDK, so let's see how to work with it.
 
 ## Integration
-### Starting the SDK
+eID started with a `Standalone` mode, containing some intro screen handling user consent or api calls directly inside the sdk.
+
+Howether, another mode has been added named `embedded`.This mode is used for internal integration into other IDnow product. API calls to get customer configuration are done in another sdk. 
+
+As we will see, implementation is not totally the same, see bellow how to start the sdk and handle the result according to the selected mode.
+
+### Standalone
+For Standalone mode, there is no difference that you use Governikus or Authada, it is automatically managed internaly.
+Please only provide following parameters in the start method.
+
+#### Start the SDK
 Here is an implementation example of launching the eID SDK from a host app:
 
 ```swift
 func startEIDFlow(token: String, viewController: UIViewController) {
     let config = try EIDConfig.Builder().build()
-    EIDSdk.shared.start(presentationViewController: viewController, token: token, config: config, callback: self)
+    EIDSdk.shared.start(
+      presentationViewController: viewController, 
+      token: token, 
+      config: config, 
+      callback: self
+    )
 }
 ```
-This code call the main start method to launch the eID library. It takes several parameters:
+This code call the main start method to launch the eID library in a standalone mode. It takes several parameters:
 
 | Parameters | Type          | Description |
 | ---------- | ------------- | ----------- |
-| presentingController   | `UIViewController`    | The presenting controller should support modal presentation from it. <br><br>Additionally, it is used to determine the appearance mode from the integrator app by accessing the userInterfaceStyle. |
+| presentationViewController   | `UIViewController`    | The presentation controller should support modal presentation from it. <br><br>Additionally, it is used to determine the appearance mode from the integrator app by accessing the userInterfaceStyle. |
 | token      | `String`      | The provided Ident token. |
 | config     | `EIDConfig`   | Object used to configure the SDK (see [Customization](#customization) section). |
 | callback   | `EIDCallback` | Protocol used to received the result of the eID session. |
 
-### Handle result
-
+#### Handle result
 Ensure the SDK start with the callback argument mentioned above, and then handling the result in these two methods:
 
 ```swift
@@ -142,12 +167,37 @@ extension ClientAppViewModel: EIDCallback {
 }
 ```
 
+### Embedded Mode
+The embedded mode is another endpoint to start eID using a `token`, a `mobileToken`, a `sessionToken` and a specific embedded config. It is only here for internal integration into IDnow product. 
+
+So, as a client, you don't need to worry about these 2 functions: 
+
+```swift
+EIDSdk.shared.start(
+  identToken: identToken,
+  mobileToken: mobileToken,
+  sessionToken: sessionToken,
+  embeddedConfig: EIDEmbeddedConfig())
+```
+and 
+
+```swift
+EIDSdk.shared.start(
+  identToken: String,
+  tcTokenUrl: String,
+  embeddedConfig: EIDEmbeddedConfig)
+```
+
 ### Error Description:
-When the SDK stops with an error, you have access to several type of errors from the `onFailure` method. You can easily work with these errors to display any content in your application. Here is the list of available `EIDError` with their description.
+When the SDK stops with an error, you have access to several type of errors from the sdk callback. You can easily work with these errors to display any content in your application. Here is the list of available `EIDError` with their description.
 ```swift
 public enum EIDError {
-    /// Session has been cancelled by user. The reason is set by user in the quitting flow screen.
-    case aborted(reason: String)
+    /// Session has been cancelled by user.
+    ///
+    /// - Parameters:
+    ///   - reason: reason of the user cancellation
+    ///   - message: optionnal short text to describe the reason
+    case aborted(reason: EIDAbortedReason, message: String? = nil)
      /// A network error occurred.
     ///
     /// - Parameters:
@@ -160,11 +210,15 @@ public enum EIDError {
     /// Ident-ID has already been completed and cannot be started again
     case tokenAlreadyCompleted
     /// Internal Error occurred during the session.
-    case internalError
+    /// - Parameters reason: optionnal reason to describe the error occurred.
+    case internalError(reason: EIDInternalErrorReason? = nil)
     /// The eID card is already blocked or user blocked it during the session.
     case cardBlocked
     /// The eID card is deactivated, authority needs to be contacted.
     case cardDeactivated
+    /// The eID card has been lost and can not be found. A new session can be start again.
+    /// Notes: Happend on the Governikus provider only. Authada allow card lost retry directly.
+    case cardLost
     /// The scanned card is not compatible, faulty or expired. User should change or update its document
     case invalidCard
     /// Timeout occurred during the scan session.
@@ -175,11 +229,13 @@ public enum EIDError {
 🎉 eID can now be launched from your host app, now let's see how to customize it.
 
 ## Customization
+
 - The parameter `config` contains all the properties to customize your eID experience.
   - Use `showTermsAndConditions(true/false)` to display or not the terms and conditions screen.
   - Use `setTheme` to customize all screen designs: colors, fonts, radius, spacing.
   - Use `setCustomFont` to customize all fonts.
 
+Note: Customization is only available for the standalone mode. In embedded mode, The Sunflower theme setup should be done on host app/sdk.
 Here is a example of theme and font customization to apply on eID:
 
 ```swift

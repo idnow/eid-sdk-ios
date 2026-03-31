@@ -1,13 +1,23 @@
 # Changelog
 
+## [1.3.0] - 2026-03-31
+### SDK Update (breaking change)
+- The public EIDError `aborted` changed to add a reason enum value `EIDAbortedReason`.
+- The public EIDError `internalError` changed to add a reason enum value `EIDInternalErrorReason`.
+- The public EIDError `NetworkErrorReason` has been renamed to `EIDNetworkErrorReason`
+- New `cardLost` EIDError added. Not used for `Authada` provider flows.
+- Public API `start` method changes:
+  - **Standalone mode**: New async/await `start` method for standalone mode. The legacy one with callback is still usable but deprecated.
+  - **Embedded mode**: New `start` method not related to standalone witch takes mobileToken and sessionToken. Internal IDnow use only ⚠️
+### Added
+- Prepare future support of Governikus provider.
+
 ## [1.2.2] - 2026-01-30
 
-## 🚀 Improvements
+### Added
 - Added a new **security enhancement** to further strengthen user data protection and improve overall reliability of the eID process.
 
----
-
-## 🐞 Fixes
+### Fixed
 - Fixed an issue where **Terms & Conditions** were displayed even when the corresponding parameter was set to `false`.  
 - Resolved a problem where the **PIN Size Selector** screen was not displayed as expected during the identification flow.
 
