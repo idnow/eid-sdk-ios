@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.1] - 2026-04-02
+### Fixed
+- Accessibility issues
+
 ## [1.3.0] - 2026-03-31
 ### SDK Update (breaking change)
 - The public EIDError `aborted` changed to add a reason enum value `EIDAbortedReason`.
