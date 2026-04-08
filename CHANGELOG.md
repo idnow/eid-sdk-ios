@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.3.2] - 2026-04-08
+### Fixed
+- Import Sunflower issues
+
 ## [1.3.1] - 2026-04-02
 ### Fixed
 - Accessibility issues
