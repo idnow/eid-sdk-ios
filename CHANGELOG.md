@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.3] - 2026-04-16
+### Added
+- Support for Sunflower 2.1.8
+### Fixed
+- Fixed an issue where Lottie animations would not start playing
+
 ## [1.3.2] - 2026-04-08
 ### Fixed
 - Import Sunflower issues
