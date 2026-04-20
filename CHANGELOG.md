@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4] - 2026-04-20
+### Added
+- Updated certificate pinning to use the intermediate certificate
+### Fixed
+- Fixed an issue where users could get stuck during the 5-pin flow
+- Fixed an issue where the title of a secondary button was sometimes displayed in white
+
 ## [1.3.3] - 2026-04-16
 ### Added
 - Support for Sunflower 2.1.8

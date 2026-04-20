@@ -28,18 +28,18 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "IDnowEID",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.3/IDnowEID.xcframework.zip",
-            checksum: "406eb3335f023f2e6334a49e6f24fc49acc72661a1faf53fd318d85c6aa889dc"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.4/IDnowEID.xcframework.zip",
+            checksum: "2e3eeb5a9e982962ca29824599d0e21018e11384388f22404d96151ce5063853"
         ),
         .binaryTarget(
             name: "IDnowEIDDynamic",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.3/IDnowEIDDynamic.xcframework.zip",
-            checksum: "8a0d840375553ec99e5ac663eb7cd743836dbdddb7bd27dd372536ea592d4f00"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.4/IDnowEIDDynamic.xcframework.zip",
+            checksum: "0d2675b99f73811dd6d660b41100e8552969c3133bbe82b41fd2428614ec4a9e"
         ),
         .binaryTarget(
             name: "IDnowEIDGovernikus",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.3/IDnowEIDGovernikus.xcframework.zip",
-            checksum: "e55ed451effeb24cfce0be4dd6ebd2897cbe40d624f1ea12176f2b2b16f0b5fe"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.4/IDnowEIDGovernikus.xcframework.zip",
+            checksum: "4321a814b4942acdcaf14dd3ba5a4700b62dab744de4b556bf566d6c00670e5c"
         ),
         .target(
             name: "IDnowEIDDynamicWrapper",
