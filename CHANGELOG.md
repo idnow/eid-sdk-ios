@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5] - 2026-04-23
+### Fixed
+- Logs are no more printed.
+- Fixed an issue where the user could get stuck at the end of the flow
+### Removed
+- Removed the dependency to external Open SSL
+
 ## [1.3.4] - 2026-04-20
 ### Added
 - Updated certificate pinning to use the intermediate certificate
