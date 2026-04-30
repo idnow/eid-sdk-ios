@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.6] - 2026-04-30
+### Fixed
+- Accessibility on several components
+- Allow user to cancel a session without choosing a reason ("other" by default)
+- Fix title colors on some screens
+
 ## [1.3.5] - 2026-04-23
 ### Fixed
 - Logs are no more printed.
