@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.8] - 2026-05-19
+### Fixed
+- Fix internal errors sent instead of card lost error and invalid token error.
+- Fix a crash when a user retries scanning a card with a CAN.
+
+## [1.3.7] - 2026-04-30
+### Fixed
+- Fix wrong translations
+
 ## [1.3.6] - 2026-04-30
 ### Fixed
 - Accessibility on several components
