@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.9] - 2026-06-04
+### Fixed
+- Improved error handling
+### Added
+- Support for Sunflower 2.1.11
+### Removed
+- Removed close button on the upload screen when the scan is a success.
+- Removed OpenSSL from Governikus dependency.
+
 ## [1.3.8] - 2026-05-19
 ### Fixed
 - Fix internal errors sent instead of card lost error and invalid token error.
