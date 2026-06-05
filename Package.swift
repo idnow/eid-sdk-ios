@@ -27,18 +27,18 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "IDnowEID",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.9/IDnowEID.xcframework.zip",
-            checksum: "0e38e9a0e848e00b6b6bb137336774b9e1fbd98240d3747f53b660b99e880821"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.4.0/IDnowEID.xcframework.zip",
+            checksum: "d4dcfca8898e3d6856e9ab59b4925bb62e879e1ea035d9568609bdf7a42d5349"
         ),
         .binaryTarget(
             name: "IDnowEIDDynamic",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.9/IDnowEIDDynamic.xcframework.zip",
-            checksum: "237d443179e13cc153e6c8b1478ca0fc70038f57434e2c94f791e1bd5f768ed1"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.4.0/IDnowEIDDynamic.xcframework.zip",
+            checksum: "43d73d1429e03c2f7a162e8ef4f4b54cd2e78b8238e7d5cef195bb6246b625b0"
         ),
         .binaryTarget(
             name: "IDnowEIDGovernikus",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.3.9/IDnowEIDGovernikus.xcframework.zip",
-            checksum: "8400a759fcb952430c56b54908c2eab55829166bb273837c9d1c8d7e20f2e8a5"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.4.0/IDnowEIDGovernikus.xcframework.zip",
+            checksum: "71530d735ca032d77901bf20f8a481b4dd5fc9ed36f5eda0f8006909c959d704"
         ),
         .binaryTarget(
             name: "OpenSSL",

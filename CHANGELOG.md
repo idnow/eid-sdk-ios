@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.4.0] - 2026-06-08
+### Added
+- Support for Authada 1.4.0
+- Support for arm64e architecture (eID Static only)
+
 ## [1.3.9] - 2026-06-04
 ### Fixed
 - Improved error handling
