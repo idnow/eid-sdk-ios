@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0] - 2026-07-22
+### Added
+- Support for Sunflower 2.2.1
+- Updated default font with new IDnow brand one
+- Updated default colors with new IDnow brand ones
+This font and these colors impact only when a custom EIDTheme or EIDCustomFont is not provided.
+
 ## [1.4.0] - 2026-06-08
 ### Added
 - Support for Authada 1.4.0

@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "IDnowEID",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v14)
     ],
     products: [
         .library(
@@ -21,35 +21,32 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/idnow/sunflower-sdk-ios.git", exact: "2.1.11"),
+        .package(url: "https://github.com/idnow/sunflower-sdk-ios.git", exact: "2.2.1"),
+        .package(url: "https://github.com/idnow/openssl-sdk-ios.git", exact: "3.6.1"),
         .package(url: "https://github.com/Governikus/AusweisApp2-SDK-iOS.git", exact: "2.2.2")
     ],
     targets: [
         .binaryTarget(
             name: "IDnowEID",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.4.0/IDnowEID.xcframework.zip",
-            checksum: "d4dcfca8898e3d6856e9ab59b4925bb62e879e1ea035d9568609bdf7a42d5349"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.5.0/IDnowEID.xcframework.zip",
+            checksum: "60cbba6adcf5b608af892c03573f92d8ea11ece0bae0cc46362bd377fc0fb8b6"
         ),
         .binaryTarget(
             name: "IDnowEIDDynamic",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.4.0/IDnowEIDDynamic.xcframework.zip",
-            checksum: "43d73d1429e03c2f7a162e8ef4f4b54cd2e78b8238e7d5cef195bb6246b625b0"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.5.0/IDnowEIDDynamic.xcframework.zip",
+            checksum: "63317ef1e2d82ab8cb5870a26a1f0e5165da869a1fc454b9a034f7423c32088c"
         ),
         .binaryTarget(
             name: "IDnowEIDGovernikus",
-            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.4.0/IDnowEIDGovernikus.xcframework.zip",
-            checksum: "71530d735ca032d77901bf20f8a481b4dd5fc9ed36f5eda0f8006909c959d704"
-        ),
-        .binaryTarget(
-            name: "OpenSSL",
-            path: "Frameworks/OpenSSL.xcframework"
+            url: "https://github.com/idnow/eid-sdk-ios/releases/download/1.5.0/IDnowEIDGovernikus.xcframework.zip",
+            checksum: "fd3599faf2085901cbf0db6d3ec95f72241e78803322a51fb9dc1a1b78d01b1c"
         ),
         .target(
             name: "IDnowEIDDynamicWrapper",
             dependencies: [
                 "IDnowEIDDynamic",
-                "OpenSSL",
-                .product(name: "SunflowerUIKit", package: "sunflower-sdk-ios")
+                .product(name: "SunflowerUIKit", package: "sunflower-sdk-ios"),
+                .product(name: "OpenSSL", package: "openssl-sdk-ios")
             ],
             path: "sources-dynamic"
         ),
