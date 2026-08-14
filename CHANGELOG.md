@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1] - 2026-08-14
+### Added
+- Support for Sunflower 2.2.2
+### Fixed
+- Fix button title color in static SDK.
+
 ## [1.5.0] - 2026-07-22
 ### Added
 - Support for Sunflower 2.2.1
