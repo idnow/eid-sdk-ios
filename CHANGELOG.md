@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.3] - 2026-10-23
+### Added
+- Support for Sunflower 2.2.3
+
 ## [1.5.2] - 2026-10-19
 ### Fixed
 - Fixed a bug where a blank verification screen was displayed after a user tapped 'Quit Identification' following an invalid-card error.
