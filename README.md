@@ -2,7 +2,7 @@
 
 [![Platform](https://img.shields.io/badge/Platform-iOS-brightgreen.svg)](https://developer.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-blue.svg)](https://developer.apple.com/swift/)
-[![iOS](https://img.shields.io/badge/iOS-13.0-red.svg)](https://developer.apple.com/swift/)
+[![iOS](https://img.shields.io/badge/iOS-15.0-red.svg)](https://developer.apple.com/swift/)
 
 ## Table of Contents
 
@@ -42,7 +42,7 @@ The eID iOS SDK is a library designed to authenticate with these German ID cards
 ## Requirements
 
 * **Xcode:** version 16.3 or higher.
-* **Deployment target:** Depends of the target: iOS 13.0 for IDnowEID, iOS 14.0 for IDnowEIDDynamic and IDnowEIDGovernikus
+* **Deployment target:** iOS 15.0
 * **Swift:** 5.9
 * **Authada library:** One of the 2 providers used to scan the chip (provided separately as an xcframework)
 * **Governikus library:**  One of the 2 providers used to scan the chip (automaticaly fetched via SPM)

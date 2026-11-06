@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.0] - 2026-11-05
+### Added
+- Support for Sunflower 2.3.0
+### Changed
+- Minimum deployment target raised to iOS 15.0 for all SDKs.
+
 ## [1.5.3] - 2026-10-23
 ### Added
 - Support for Sunflower 2.2.3
