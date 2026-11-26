@@ -1,8 +1,8 @@
 # eID - IDnow
 
 [![Platform](https://img.shields.io/badge/Platform-iOS-brightgreen.svg)](https://developer.apple.com/ios/)
-[![Swift](https://img.shields.io/badge/Swift-5.9-blue.svg)](https://developer.apple.com/swift/)
-[![iOS](https://img.shields.io/badge/iOS-15.0-red.svg)](https://developer.apple.com/swift/)
+[![iOS](https://img.shields.io/badge/iOS-15.0+-red.svg)](https://developer.apple.com/ios/)
+[![Xcode](https://img.shields.io/badge/Xcode-27.1-blue.svg)](https://developer.apple.com/xcode/)
 
 ## Table of Contents
 
@@ -12,16 +12,20 @@
   - [Key Features](#key-features)
   - [Requirements](#requirements)
   - [Installation](#installation)
-    - [Add IDnowEID library](#add-idnoweid-library)
-	  - [IDnowEID library (static)](#static-idnoweid-library)
-	  - [IDnowEID library (dynamic)](#dynamic-idnoweid-library)
+    - [Import the project](#import-the-project)
+    - [Add a specific eID library](#add-a-specific-eid-library)
+      - [Static IDnowEID library](#static-idnoweid-library)
+      - [IDnowEIDDynamic library](#idnoweiddynamic-library)
+      - [IDnowEIDGovernikus library](#idnoweidgovernikus-library)
     - [Configure NFC](#configure-nfc)
       - [Target settings - Signing \& Capabilities](#target-settings---signing--capabilities)
       - [Entitlements file](#entitlements-file)
       - [Info.plist file](#infoplist-file)
   - [Integration](#integration)
-    - [Starting the SDK](#starting-the-sdk)
-    - [Handle result](#handle-result)
+    - [Standalone](#standalone)
+      - [Start the SDK](#start-the-sdk)
+      - [Handle result](#handle-result)
+    - [Embedded Mode](#embedded-mode)
     - [Error Description:](#error-description)
   - [Customization](#customization)
   - [Additional features](#additional-features)
@@ -41,12 +45,14 @@ The eID iOS SDK is a library designed to authenticate with these German ID cards
 
 ## Requirements
 
-* **Xcode:** version 16.3 or higher.
+* **Xcode:** version 27.1 or higher.
 * **Deployment target:** iOS 15.0
-* **Swift:** 5.9
 * **Authada library:** One of the 2 providers used to scan the chip (provided separately as an xcframework)
 * **Governikus library:**  One of the 2 providers used to scan the chip (automaticaly fetched via SPM)
-* **OpenSSL:** used by the AuthadaAuthenticationLibrary. Current version: 3.1.5
+* **OpenSSL:** used by the AuthadaAuthenticationLibrary (Authada targets only, see [Add a specific eID library](#add-a-specific-eid-library)):
+  * `IDnowEIDDynamic`: version 3.6.1, automatically fetched via SPM ([idnow/openssl-sdk-ios](https://github.com/idnow/openssl-sdk-ios))
+  * `IDnowEID` (static): version 3.3.3, provided separately as `OpenSSL.xcframework`
+  * `IDnowEIDGovernikus`: not needed
 * **NFC:** NFC-enabled smartphone. (iPhone7 or newer models)
 
 ## Installation
@@ -71,6 +77,9 @@ After importing it, select a target according to your need, you should only impo
 Add `IDnowEID` to your target.
 
 3 libraries will be provided separately + 1 resource bundle. You will need to add `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework`, `OpenSSL.xcframework` and `AALUSResources.bundle` to your Xcode project.
+
+> ℹ️ The static target does not use SPM for OpenSSL: the provided `OpenSSL.xcframework` (OpenSSL 3.3.3, arm64/arm64e + simulator) is a **dynamic** framework, which is why it must be embedded in your app. Do not add the `openssl-sdk-ios` package in addition to it.
+
 Here is the step to add them:
 
 - Add `AuthadaAuthenticationLibraryUnbundledStatic.xcframework`, `Lottie.xcframework` and `OpenSSL.xcframework` to `Frameworks, Libraries, and Embedded Content` section of your application target.
@@ -84,6 +93,9 @@ Here is the step to add them:
 Add `IDnowEIDDynamic` to your target.
 
 1 library will be provided separately. You will need to add `AuthadaAuthenticationLibraryUnbundled.xcframework` to your Xcode project.
+
+OpenSSL (3.6.1, [idnow/openssl-sdk-ios](https://github.com/idnow/openssl-sdk-ios)) and Sunflower are SPM dependencies of `IDnowEIDDynamic`: they are fetched automatically, there is no `OpenSSL.xcframework` to add manually.
+
 Here is the step to add it:
 
 - Add `AuthadaAuthenticationLibraryUnbundled.xcframework` to `Frameworks, Libraries, and Embedded Content` section of your application target.
@@ -94,7 +106,7 @@ Here is the step to add it:
 
 Add `IDnowEIDGovernikus` to your target.
 
-All libraries are imported automatically. It will be the case of the Governikus sdk.
+All libraries (AusweisApp2 and Sunflower) are imported automatically via SPM. There is no need to add Authada nor OpenSSL like the other targets.
 
 ### Configure NFC
 #### Target settings - Signing & Capabilities
@@ -147,9 +159,9 @@ func start(identToken: String,
 ```
 Here is an example of how to call it:
 ```swift
-let defaultConfig = try EIDConfig.Builder().build()
+let defaultConfig = EIDConfig.Builder().build()
 do {
-    try await EIDSdk.shared.start(identToken: identToken
+    try await EIDSdk.shared.start(identToken: identToken,
                                   config: defaultConfig)
     // Handle success.
 } catch {
@@ -178,7 +190,7 @@ func start(
   identToken: String,
   mobileToken: String,
   sessionToken: String,
-  embeddedConfig: EIDEmbeddedConfig)
+  embeddedConfig: EIDEmbeddedConfig) async throws(EIDError) -> EIDEmbeddedResult
 ```
 and 
 
@@ -186,7 +198,7 @@ and
 func start(
   identToken: String,
   tcTokenUrl: String,
-  embeddedConfig: EIDEmbeddedConfig)
+  embeddedConfig: EIDEmbeddedConfig) async throws(EIDError) -> EIDEmbeddedResult
 ```
 
 ### Error Description:
@@ -203,7 +215,7 @@ public enum EIDError {
     ///
     /// - Parameters:
     ///   - reason: optionnal reason for specific cases, nil by default for client or server errors.
-    case networkError(reason: NetworErrorReason?)
+    case networkError(reason: EIDNetworErrorReason?)
     /// NFC is not available on the device.
     case nfcNotAvailable
     /// Ident-ID is invalid.
@@ -232,7 +244,7 @@ public enum EIDError {
 ## Customization
 
 - The parameter `config` contains all the properties to customize your eID experience.
-  - Use `showTermsAndConditions(true/false)` to display or not the terms and conditions screen.
+  - Use `setShowTermsAndConditions(true/false)` to display or not the terms and conditions screen.
   - Use `setTheme` to customize all screen designs: colors, fonts, radius, spacing.
   - Use `setCustomFont` to customize all fonts.
 

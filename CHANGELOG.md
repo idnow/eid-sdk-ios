@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.6.1] - 2026-11-26
+### Added
+- Support for Sunflower 2.3.1
+
 ## [1.6.0] - 2026-11-05
 ### Added
 - Support for Sunflower 2.3.0
